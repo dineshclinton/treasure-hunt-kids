@@ -1,0 +1,125 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Treasure Hunt (Kids Edition)</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header>
+    <h1>🗺️ Treasure Hunt </h1>
+    <p>Auto‑play music, 5× slower token movement, 🎣 Net Thief, 🪝 Hook Thief (−16), icons‑only tiles, row‑wise path.</p>
+  </header>
+
+  <div class="wrap">
+    <section class="board">
+      <div class="grid" id="grid"></div>
+      <div class="legend">
+        <span class="tag"><b>🏁</b> Start / Finish</span>
+        <span class="tag"><b>🪙</b> Gold</span>
+        <span class="tag"><b>🥈</b> Silver</span>
+        <span class="tag"><b>🥉</b> Bronze</span>
+        <span class="tag"><b>👑</b> Gold Pair</span>
+        <span class="tag"><b>🎣</b> Net Thief</span>
+        <span class="tag"><b>🗡️</b> Sword Thief</span>
+        <span class="tag"><b>🪝</b> Hook Thief (−16)</span>
+      </div>
+    </section>
+
+    <section class="hud">
+      <div class="row">
+        <input id="playerName" type="text" placeholder="Enter player name" />
+        <input id="photoInput" type="file" accept="image/*" capture="environment" />
+        <button id="camStartBtn" class="secondary">Use Camera</button>
+        <video id="cam" width="160" height="120" autoplay playsinline style="display:none; border-radius:8px; border:1px solid #ccc"></video>
+        <button id="camSnapBtn" class="secondary" style="display:none">Capture Photo</button>
+        <canvas id="camCanvas" width="160" height="120" style="display:none"></canvas>
+        <img id="avatarImg" class="avatar" alt="avatar" src="" />
+        <button id="startBtn">Start Game</button>
+        <div class="dice" id="dice">⚄</div>
+        <button id="rollBtn" disabled>Roll Dice</button>
+        <button id="resetBtn" class="secondary">Reset</button>
+      </div>
+
+      <div class="controls">
+        <div class="card">
+          <h3>🎵 Music & SFX</h3>
+          <div class="row">
+            <button id="musicToggle">Play Music</button>
+            <label>Theme
+              <select id="musicTheme">
+                <option value="calm" selected>Calm</option>
+                <option value="adventure">Adventure</option>
+                <option value="space">Space</option>
+              </select>
+            </label>
+            <label>Music Vol <input id="musicVol" type="range" min="0" max="1" step="0.01" value="0.75"></label>
+            <label><input id="autoMusic" type="checkbox" checked> Auto‑play on Start</label>
+            <button id="muteBtn" class="secondary">Mute SFX</button>
+            <label>SFX Vol <input id="sfxVol" type="range" min="0" max="1" step="0.01" value="0.5"></label>
+          </div>
+        </div>
+      </div>
+
+      <div class="score">
+        <div class="card">
+          <h3>Current Game</h3>
+          <div class="row" style="gap:8px; align-items:center">
+            <img id="avatarSmall" class="avatar sm" alt="avatar" src="" />
+            <div><b>Player:</b> <span id="nameOut">—</span></div>
+          </div>
+          <div><b>Points:</b> <span id="points">0</span></div>
+          <div><b>Rolls:</b> <span id="moves">0</span></div>
+          <div><b>Total Score (Points + Rolls):</b> <span id="totalScore">0</span></div>
+          <div><b>Gold Pair:</b> <span id="gpair">❌</span></div>
+          <div><b>Position:</b> <span id="pos">0</span> / 35</div>
+        </div>
+        <div class="card">
+          <h3>Turn Log</h3>
+          <div class="log" id="log"></div>
+        </div>
+      </div>
+
+      <div class="card" id="scoresCard" style="margin-top:12px">
+        <h3>🏆 High Scores</h3>
+        <table>
+          <thead>
+            <tr><th class="photo-cell">Photo</th><th>Player</th><th>Points</th><th>Rolls</th><th>Total</th><th>Gold Pair</th><th>Date</th></tr>
+          </thead>
+          <tbody id="scoresBody"></tbody>
+        </table>
+        <div class="row" style="margin-top:8px">
+          <button id="clearScores" class="danger">Clear Scores</button>
+          <button id="copyScores" class="secondary">Copy Scores (CSV)</button>
+        </div>
+      </div>
+
+      <div id="winner" class="winner hidden">
+        <h3>🎉 Winner!</h3>
+        <p><span id="winName">Player</span> finished with a Gold Pair.
+           Final total: <b><span id="finalTotal">0</span></b> (Points <span id="finalPoints">0</span> + Rolls <span id="finalMoves">0</span>)
+        </p>
+        <div class="row" style="gap:8px; align-items:center">
+          <button id="playAgainMusic" class="secondary">Back to Normal Music</button>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:12px">
+        <h3>How to Play</h3>
+        <ol>
+          <li>Enter your name and add a photo (camera or file). Press <b>Start Game</b>.</li>
+          <li>Follow the row‑wise (serpentine) path—arrows show direction.</li>
+          <li>Coins add points; thieves subtract points.</li>
+          <li><b>Exact finish:</b> You must roll the exact number to reach <b>Finish</b>. If you roll more than needed, your turn ends—try again next roll.</li>
+          <li>If points drop below 0, you return to <b>Start</b> (points reset to 0).</li>
+          <li>Win with a <b>Gold Pair</b>. Final score = <b>Points + Rolls</b>. Victory music plays and the scoreboard updates.</li>
+        </ol>
+      </div>
+    </section>
+  </div>
+
+  <script src="app.js" defer></script>
+</body>
+</html>
