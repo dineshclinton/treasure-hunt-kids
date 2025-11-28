@@ -1,4 +1,4 @@
-# Treasure Hunt – v3.3 (Kids Edition)
+# Treasure Hunt (Kids Edition)
 
 A simple, kid‑friendly board game built for the browser. Designed to celebrate **National STEAM Day** and to make learning playful.
 
