@@ -1,29 +1,35 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Treasure Hunt (Kids Edition)</title>
+  <title>Treasure Hunt – Kids Edition</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
   <header>
-    <h1>🗺️ Treasure Hunt </h1>
-    <p>Auto‑play music, 5× slower token movement, 🎣 Net Thief, 🪝 Hook Thief (−16), icons‑only tiles, row‑wise path.</p>
+    <h1>🗺️ Treasure Hunt – Kids Edition</h1>
   </header>
 
   <div class="wrap">
     <section class="board">
-      <div class="grid" id="grid"></div>
+      <div class="grid" id="grid">
+        <!-- Dice cell structurally occupies [0,0] & [0,1] (row 1, cols 1–2) -->
+        <div class="dice-cell" id="diceCell" style="grid-row-start:1; grid-column-start:1; grid-column-end:3;">
+          <div class="dice" id="dice">⚄</div>
+          <button id="rollBtn" class="primary" disabled>Roll</button>
+        </div>
+      </div>
+
       <div class="legend">
-        <span class="tag"><b>🏁</b> Start / Finish</span>
-        <span class="tag"><b>🪙</b> Gold</span>
-        <span class="tag"><b>🥈</b> Silver</span>
-        <span class="tag"><b>🥉</b> Bronze</span>
-        <span class="tag"><b>👑</b> Gold Pair</span>
-        <span class="tag"><b>🎣</b> Net Thief</span>
-        <span class="tag"><b>🗡️</b> Sword Thief</span>
+        <span class="tag"><b>🚢</b> Start</span>
+        <span class="tag"><b>🏁</b> Finish</span>
+        <span class="tag"><b>🪙</b> Gold (+3)</span>
+        <span class="tag"><b>🪙</b> Silver Coin (+2)</span>
+        <span class="tag"><b>🪙</b> Bronze Coin (+1)</span>
+        <span class="tag"><b>👑</b> Gold Pair (+6)</span>
+        <span class="tag"><b>🎣</b> Net Thief (−2)</span>
+        <span class="tag"><b>🗡️</b> Sword Thief (−3)</span>
         <span class="tag"><b>🪝</b> Hook Thief (−16)</span>
       </div>
     </section>
@@ -31,15 +37,14 @@
     <section class="hud">
       <div class="row">
         <input id="playerName" type="text" placeholder="Enter player name" />
-        <input id="photoInput" type="file" accept="image/*" capture="environment" />
+        <input id="photoInput" type="file" accept="image/*" capture="user" />
         <button id="camStartBtn" class="secondary">Use Camera</button>
         <video id="cam" width="160" height="120" autoplay playsinline style="display:none; border-radius:8px; border:1px solid #ccc"></video>
         <button id="camSnapBtn" class="secondary" style="display:none">Capture Photo</button>
         <canvas id="camCanvas" width="160" height="120" style="display:none"></canvas>
+
         <img id="avatarImg" class="avatar" alt="avatar" src="" />
         <button id="startBtn">Start Game</button>
-        <div class="dice" id="dice">⚄</div>
-        <button id="rollBtn" disabled>Roll Dice</button>
         <button id="resetBtn" class="secondary">Reset</button>
       </div>
 
@@ -56,10 +61,26 @@
               </select>
             </label>
             <label>Music Vol <input id="musicVol" type="range" min="0" max="1" step="0.01" value="0.75"></label>
-            <label><input id="autoMusic" type="checkbox" checked> Auto‑play on Start</label>
             <button id="muteBtn" class="secondary">Mute SFX</button>
             <label>SFX Vol <input id="sfxVol" type="range" min="0" max="1" step="0.01" value="0.5"></label>
           </div>
+        </div>
+        <div class="card">
+          <h3>🏃 Speed</h3>
+          <div class="row">
+            <label>Token Speed
+              <select id="speedSel">
+                <option value="1100" selected>Slow</option>
+                <option value="450">Normal</option>
+                <option value="180">Fast</option>
+              </select>
+            </label>
+          </div>
+        </div>
+        <div class="card">
+          <h3>📖 Bible Verse (KJV)</h3>
+          <p class="verse">“Trust in the LORD with all thine heart.”</p>
+          <p class="verse-ref">— Proverbs 3:5 (KJV)</p>
         </div>
       </div>
 
@@ -76,7 +97,7 @@
           <div><b>Gold Pair:</b> <span id="gpair">❌</span></div>
           <div><b>Position:</b> <span id="pos">0</span> / 35</div>
         </div>
-        <div class="card">
+        <div class="card hidden" id="turnLogCard">
           <h3>Turn Log</h3>
           <div class="log" id="log"></div>
         </div>
@@ -93,6 +114,7 @@
         <div class="row" style="margin-top:8px">
           <button id="clearScores" class="danger">Clear Scores</button>
           <button id="copyScores" class="secondary">Copy Scores (CSV)</button>
+          <button id="toggleLog" class="secondary">Show Turn Log</button>
         </div>
       </div>
 
@@ -109,10 +131,10 @@
       <div class="card" style="margin-top:12px">
         <h3>How to Play</h3>
         <ol>
-          <li>Enter your name and add a photo (camera or file). Press <b>Start Game</b>.</li>
-          <li>Follow the row‑wise (serpentine) path—arrows show direction.</li>
-          <li>Coins add points; thieves subtract points.</li>
-          <li><b>Exact finish:</b> You must roll the exact number to reach <b>Finish</b>. If you roll more than needed, your turn ends—try again next roll.</li>
+          <li>Enter your name. A sample avatar is shown by default; optionally capture a photo (camera) or choose a file.</li>
+          <li>Follow the row‑wise (serpentine) path—arrows show direction. Rows are <b>color‑coded</b> to guide the path.</li>
+          <li>Coins add points (🪙 +3, 🪙 +2, 🪙 +1); thieves subtract points (🎣 −2, 🗡️ −3, 🪝 −16).</li>
+          <li><b>Exact finish:</b> Roll the exact number to reach <b>Finish</b>.</li>
           <li>If points drop below 0, you return to <b>Start</b> (points reset to 0).</li>
           <li>Win with a <b>Gold Pair</b>. Final score = <b>Points + Rolls</b>. Victory music plays and the scoreboard updates.</li>
         </ol>
